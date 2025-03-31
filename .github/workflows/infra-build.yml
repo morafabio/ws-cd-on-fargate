@@ -8,7 +8,10 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: 'Terraform action: plan, apply'
+        type: choice
+        options:
+          - plan
+          - apply
         required: false
         default: 'plan'
 
