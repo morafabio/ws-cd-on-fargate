@@ -1,0 +1,40 @@
+name: infra/PR
+
+on:
+  push:
+    paths:
+      - "infra/**"
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Terraform action: plan, apply, destroy, shell'
+        required: false
+        default: 'plan'
+
+concurrency:
+  group: infra-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+#      - name: Docker Hub Login
+#        if: ${{ secrets.DOCKERHUB_USERNAME && secrets.DOCKERHUB_TOKEN }}
+#        run: |
+#          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Run Terraform
+        env:
+          TF_VAR_GITHUB_TOKEN: ${{ secrets.TF_VAR_GITHUB_TOKEN }}
+        run: |
+          ACTION="${{ github.event.inputs.action }}"
+          if [ -z "$ACTION" ]; then
+            ACTION="plan"
+          fi
+          echo "Running terraform action: $ACTION"
+          ./infra/run "$ACTION"
