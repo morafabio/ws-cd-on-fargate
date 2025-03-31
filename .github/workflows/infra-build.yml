@@ -1,9 +1,10 @@
-name: infra/PR
+name: infra/build
 
 on:
   push:
     paths:
       - "infra/**"
+      - ".github/workflows/infra-**"
   workflow_dispatch:
     inputs:
       action:
