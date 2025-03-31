@@ -8,6 +8,8 @@ subnet_ids = [
 state_bucket     = ""
 state_lock_table = ""
 
+dockerhub_username     = ""
+dockerhub_token        = ""
 github_token           = ""
 aws_access_key_id      = ""
 aws_secret_access_key  = ""

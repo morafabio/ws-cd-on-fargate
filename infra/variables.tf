@@ -18,6 +18,16 @@ variable "state_lock_table" {
   type        = string
 }
 
+variable "dockerhub_username" {
+  type        = string
+  sensitive   = true
+}
+
+variable "dockerhub_token" {
+  type        = string
+  sensitive   = true
+}
+
 variable "github_token" {
   type        = string
   sensitive   = true
