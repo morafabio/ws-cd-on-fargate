@@ -1,0 +1,44 @@
+#!/bin/bash
+set -eu -o pipefail
+
+# options
+ACTION="${1:-}"
+ENV="${2:-infra}"
+
+# config
+TERRAFORM_IMAGE="hashicorp/terraform:1.11"
+WORKDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# actions
+run_terraform() {
+  docker run --rm \
+    --volume "${WORKDIR}:/app" \
+    ${TERRAFORM_IMAGE} -chdir="/app" \
+    "$@" -var-file="vars/${ENV}.tfvars"
+}
+
+# main
+case "${ACTION}" in
+  plan)
+    run_terraform init
+    run_terraform plan
+    ;;
+  apply)
+    run_terraform init
+    run_terraform apply -auto-approve
+    ;;
+  destroy)
+    run_terraform init
+    run_terraform destroy -auto-approve
+    ;;
+  shell)
+    docker run --rm -ti \
+      --volume "$(pwd):/app" \
+      --entrypoint /bin/sh \
+      ${TERRAFORM_IMAGE}
+    ;;
+  *)
+    echo "Usage: $0 {plan|apply|destroy} [tfvars_file (default: vars/infra.tfvars)]"
+    exit 1
+    ;;
+esac

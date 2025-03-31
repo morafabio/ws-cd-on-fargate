@@ -1,0 +1,9 @@
+# Terraform
+infra/.terraform
+infra/.terraform.lock.hcl
+infra/vars/*.tfvars
+!infra/vars/*.dist
+infra/*.tfstate*
+
+# dev
+.idea
