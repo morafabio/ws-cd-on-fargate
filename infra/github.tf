@@ -8,6 +8,12 @@ resource "github_repository" "ws_cd_on_fargate" {
   allow_rebase_merge = false
 }
 
+resource "github_actions_secret" "tf_var_github_token" {
+  repository      = github_repository.ws_cd_on_fargate.name
+  secret_name     = "TF_VAR_GITHUB_TOKEN"
+  plaintext_value = var.github_token
+}
+
 resource "github_actions_secret" "aws_access_key_id" {
   repository      = github_repository.ws_cd_on_fargate.name
   secret_name     = "AWS_ACCESS_KEY_ID"

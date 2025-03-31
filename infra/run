@@ -13,6 +13,7 @@ WORKDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 run_terraform() {
   docker run --rm \
     --volume "${WORKDIR}:/app" \
+    -e TF_VAR_github_token="${TF_VAR_github_token:-}" \
     ${TERRAFORM_IMAGE} -chdir="/app" \
     "$@" -var-file="vars/${ENV}.tfvars"
 }
