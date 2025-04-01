@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ master ]
 
+concurrency:
+  group: infra-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-test-push:
     runs-on: ubuntu-latest
