@@ -2,8 +2,10 @@ FROM python:3.11-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN \
-    apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/* \
+RUN uname -a \
+    && apt-get update \
+    && apt-get install -y git \
+    && rm -rf /var/lib/apt/lists/* \
     && pip install --no-cache-dir \
       fastapi uvicorn transformers torch \
       huggingface_hub[hf_xet]
