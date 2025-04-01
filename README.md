@@ -3,22 +3,20 @@
 ## App
 
 ### Development
+
 Build:
 ```shell
 docker build -f build/Dockerfile -t app-web:latest .
 ```
 
-Run development:
+Run:
 ```shell
 docker run --rm -ti -p 8080:8080 -v "$(pwd)/src:/app" app-web:latest
 ```
 
-Run packaged:
-```shell
-docker run --rm -ti -p 8080:8080 app-web:latest
-```
-
 ### Test
+
+#### Endpoints
 
 Root:
 ```shell
@@ -33,7 +31,8 @@ curl -X POST -d '{"text": "This is the worst experience ever."}' http://localhos
 curl -X POST -d '{"text": "¡Este producto es fantástico!"}' http://localhost:8080/predict
 ```
 
-End-to-end tests:
+#### Features
+
 ```shell
 docker run --rm -ti \
   -v "$(pwd)/test/features.js:/app/tests.js" \

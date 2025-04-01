@@ -30,7 +30,7 @@ jobs:
       - name: Build Docker Image
         run: docker build -f build/Dockerfile -t app-web:latest .
 
-      - name: Run Tests
+      - name: Tests
         run: |
           # start service
           container_id=$(docker run -d -p 8080:8080 app-web:latest)
@@ -46,6 +46,13 @@ jobs:
               exit 1
             fi
           done
-          # tests
+          
+          # healthcheck
           response=$(curl -s http://localhost:8080/)
           echo $response
+          
+          # end-to-end
+          docker run --rm -ti \
+            -v "$(pwd)/test/features.js:/app/tests.js" \
+            -e BASE_URL=http://host.docker.internal:8080 \
+            grafana/k6 run /app/tests.js
