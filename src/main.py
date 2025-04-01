@@ -11,7 +11,7 @@ classifier = pipeline("sentiment-analysis")
 
 @app.get("/")
 def root():
-    uptime = round(time.time() - start_time, 2)  # Δt = t_current - t₀
+    uptime = round(time.time() - start_time, 2)
     return {
         "status": "ok",
         "uptime_seconds": uptime,

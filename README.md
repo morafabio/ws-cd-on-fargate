@@ -32,3 +32,11 @@ curl -X POST -d '{"text": "Today is a cloudy day with mild temperatures."}' http
 curl -X POST -d '{"text": "This is the worst experience ever."}' http://localhost:8080/predict
 curl -X POST -d '{"text": "¡Este producto es fantástico!"}' http://localhost:8080/predict
 ```
+
+End-to-end tests:
+```shell
+docker run --rm -ti \
+  -v "$(pwd)/test/features.js:/app/tests.js" \
+  -e BASE_URL=http://host.docker.internal:8080 \
+  grafana/k6 run /app/tests.js
+```
