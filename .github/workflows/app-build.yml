@@ -32,7 +32,9 @@ jobs:
         with:
           tags: app-web:latest
           file: build/Dockerfile
+          load: 'true'
           context: .
+          target: app
 
       - name: Tests
         run: |

@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.11-slim AS app
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -11,7 +11,7 @@ RUN uname -a \
       huggingface_hub[hf_xet]
 
 COPY src/ /app
-WORKDIR /app
 
+WORKDIR /app
 EXPOSE 8080
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
