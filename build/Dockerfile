@@ -9,7 +9,7 @@ RUN apt-get update && \
 COPY src/requirements.txt /opt/requirements.txt
 
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r /app/requirements.txt
+    pip install --no-cache-dir -r /opt/requirements.txt
 
 FROM python:3.11-slim AS app
 
