@@ -6,12 +6,12 @@
 
 Build:
 ```shell
-docker build -f build/Dockerfile -t app-web:latest .
+docker build -f build/Dockerfile -t app-cd-on-fargate/web:test .
 ```
 
 Run:
 ```shell
-docker run --rm -ti -p 8080:8080 -v "$(pwd)/src:/app" app-web:latest
+docker run --rm -ti -p 8080:8080 -v "$(pwd)/src:/app" app-cd-on-fargate/web:test
 ```
 
 ### Test
