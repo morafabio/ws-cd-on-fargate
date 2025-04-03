@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v3
 
       - name: Login to Docker Hub
@@ -27,19 +27,18 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push Docker image
+      - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
           tags: app-web:latest
           file: build/Dockerfile
           context: .
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Tests
         run: |
           # start service
           container_id=$(docker run -d -p 8080:8080 app-web:latest)
+          
           # wait start
           timeout=10
           counter=0

@@ -1,10 +1,10 @@
 name: infra/build
 
 on:
-#  push:
-#    paths:
-#      - "infra/**"
-#      - ".github/workflows/infra-**"
+  #  push:
+  #    paths:
+  #      - "infra/**"
+  #      - ".github/workflows/infra-**"
   workflow_dispatch:
     inputs:
       action:
@@ -13,6 +13,7 @@ on:
           - plan
           - apply
         required: false
+        description: 'terraform action'
         default: 'plan'
 
 concurrency:
