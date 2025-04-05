@@ -14,7 +14,8 @@ jobs:
   build-test-push:
     runs-on: ubuntu-latest
     env:
-      BASE_URL: localhost:8080
+      BASE_HOST: app
+      BASE_PORT: 8080
 
     steps:
       - name: Checkout
@@ -32,7 +33,6 @@ jobs:
           \`\`\`
           Runner: $(uname -a)
           Docker: $(docker --version)
-          Docker Hub: ${{ secrets.DOCKERHUB_USERNAME }}
           \`\`\`
           EOF
 
@@ -68,7 +68,8 @@ jobs:
 
       - name: Tests / setup
         run: |
-          container_id=$(docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/app-web:latest)
+          docker network create test-network
+          container_id=$(docker run --name app -d -p ${BASE_PORT}:${BASE_PORT} ${{ secrets.DOCKERHUB_USERNAME }}/app-web:latest)
           cat <<EOF >> $GITHUB_STEP_SUMMARY
           ## Test
           \`\`\`
@@ -78,7 +79,7 @@ jobs:
 
           timeout=10
           counter=0
-          until [ "$(curl -o /dev/null -s -w '%{http_code}' http://${BASE_URL}/)" -eq 200 ]; do
+          until [ "$(curl -o /dev/null -s -w '%{http_code}' http://${BASE_HOST}:${BASE_PORT}/)" -eq 200 ]; do
             counter=$((counter+1))
             if [ $counter -ge $timeout ]; then
               echo "## Error: Service did not respond within ${timeout}s." >> $GITHUB_STEP_SUMMARY
@@ -90,10 +91,24 @@ jobs:
 
       - name: Tests / End-to-End
         run: |
-          response=$(curl -s http://localhost:8080/)
+          response=$(curl -s http://${BASE_HOST}:${BASE_PORT}/)
           cat <<EOF >> $GITHUB_STEP_SUMMARY
           ## Health Check
           \`\`\`
           $response
+          \`\`\`
+          EOF
+
+      - name: Tests / End-to-End
+        run: |
+          docker run --rm --network test-network \
+            -v "$(pwd)/test/tests.js:/app/tests.js" \
+            -e BASE_URL="${BASE_URL}:${BASE_PORT}" \
+            grafana/k6 run /app/tests.js | tee report.txt
+
+          cat <<EOF >> $GITHUB_STEP_SUMMARY
+          ## Tests
+          \`\`\`
+          $(cat report.txt)
           \`\`\`
           EOF
