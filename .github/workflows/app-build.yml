@@ -14,7 +14,7 @@ jobs:
   build-test-push:
     runs-on: ubuntu-latest
     env:
-      - BASE_URL: localhost:8080
+      BASE_URL: localhost:8080
 
     steps:
       - name: Checkout
