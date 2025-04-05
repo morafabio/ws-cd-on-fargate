@@ -25,10 +25,10 @@ curl localhost:8080/
 
 Inference:
 ```shell
-curl -X POST -d '{"text": "I absolutely love this!"}' http://localhost:8080/predict
-curl -X POST -d '{"text": "Today is a cloudy day with mild temperatures."}' http://localhost:8080/predict
-curl -X POST -d '{"text": "This is the worst experience ever."}' http://localhost:8080/predict
-curl -X POST -d '{"text": "¡Este producto es fantástico!"}' http://localhost:8080/predict
+curl -X POST -d '{"text": "I absolutely love this!"}' http://localhost:8080/hash
+curl -X POST -d '{"text": "Today is a cloudy day with mild temperatures."}' http://localhost:8080/hash
+curl -X POST -d '{"text": "This is the worst experience ever."}' http://localhost:8080/hash
+curl -X POST -d '{"text": "¡Este producto es fantástico!"}' http://localhost:8080/hash
 ```
 
 #### Features

@@ -1,9 +1,9 @@
 # infra
-infra/.terraform
-infra/.terraform.lock.hcl
-infra/vars/*.tfvars
-!infra/vars/*.dist
-infra/*.tfstate*
+**/.terraform
+**/.terraform.lock.hcl
+**/*.tfstate*
+**/*.tfvars
+!**/*.dist
 
 # app
 src/__pycache__/**
