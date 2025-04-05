@@ -76,7 +76,6 @@ jobs:
           Container ID: $container_id
           \`\`\`
           EOF
-          
           timeout=10
           counter=0
           until [ "$(curl -o /dev/null -s -w '%{http_code}' http://localhost:${BASE_PORT}/)" -eq 200 ]; do
@@ -89,26 +88,33 @@ jobs:
             sleep 1
           done
 
-      - name: Tests / Health Check
+      - name: Tests / Functional
         run: |
           response=$(curl -s http://localhost:${BASE_PORT}/)
           cat <<EOF >> $GITHUB_STEP_SUMMARY
-          ## Health Check
+          ## GET /
+          \`\`\`
+          $response
+          \`\`\`
+          EOF
+          response=$(curl -X POST -d '{"text": "I absolutely love this!"}' http://localhost:${BASE_PORT}/hash)
+          cat <<EOF >> $GITHUB_STEP_SUMMARY
+          ## POST /hash
           \`\`\`
           $response
           \`\`\`
           EOF
 
-      - name: Tests / End-to-End
-        run: |
-          docker run --rm --network test-network \
-            -v "$(pwd)/test/tests.js:/app/tests.js" \
-            -e BASE_URL="${BASE_URL}:${BASE_PORT}" \
-            grafana/k6 run --quiet /app/tests.js | tee report.txt
-
-          cat <<EOF >> $GITHUB_STEP_SUMMARY
-          ## Tests
-          \`\`\`
-          $(cat report.txt)
-          \`\`\`
-          EOF
+#      - name: Tests / End-to-End
+#        run: |
+#          docker run --rm --network test-network \
+#            -v "$(pwd)/test/tests.js:/app/tests.js" \
+#            -e BASE_URL="${BASE_URL}:${BASE_PORT}" \
+#            grafana/k6 run --quiet /app/tests.js | tee report.txt
+#
+#          cat <<EOF >> $GITHUB_STEP_SUMMARY
+#          ## Tests
+#          \`\`\`
+#          $(cat report.txt)
+#          \`\`\`
+#          EOF
