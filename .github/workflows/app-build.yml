@@ -49,7 +49,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v5
         with:
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/app-web:latest
+          tags: app-web:latest
           file: build/Dockerfile
           load: true
           context: .
@@ -57,25 +57,28 @@ jobs:
 
       - name: Docker / package
         run: |
-          IMAGE_ID=$(docker images --format "{{.ID}}" ${{ secrets.DOCKERHUB_USERNAME }}/app-web:latest | head -n 1)
+          IMAGE_ID=$(docker images --format "{{.ID}}" app-web:latest | head -n 1)
           cat <<EOF >> $GITHUB_STEP_SUMMARY
           ## Package
           \`\`\`
           Image ID: $IMAGE_ID
-          Image Tag: ${{ secrets.DOCKERHUB_USERNAME }}/app-web:latest
+          Image Tag: app-web:latest
           \`\`\`
           EOF
 
       - name: Tests / setup
         run: |
           docker network create test-network
-          container_id=$(docker run -d --name ${BASE_HOST} -p ${BASE_PORT}:${BASE_PORT} ${{ secrets.DOCKERHUB_USERNAME }}/app-web:latest)
+          container_id=$(docker run -d --name ${BASE_HOST} -p ${BASE_PORT}:${BASE_PORT} app-web:latest)
           cat <<EOF >> $GITHUB_STEP_SUMMARY
           ## Test
           \`\`\`
           Container ID: $container_id
           \`\`\`
           EOF
+          
+          sleep 3
+          curl -v http://${BASE_HOST}:${BASE_PORT}/
           
           timeout=10
           counter=0
