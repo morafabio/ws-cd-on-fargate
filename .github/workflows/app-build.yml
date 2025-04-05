@@ -89,7 +89,7 @@ jobs:
             sleep 1
           done
 
-      - name: Tests / End-to-End
+      - name: Tests / Health Check
         run: |
           response=$(curl -s http://localhost:${BASE_PORT}/)
           cat <<EOF >> $GITHUB_STEP_SUMMARY
@@ -104,7 +104,7 @@ jobs:
           docker run --rm --network test-network \
             -v "$(pwd)/test/tests.js:/app/tests.js" \
             -e BASE_URL="${BASE_URL}:${BASE_PORT}" \
-            grafana/k6 run /app/tests.js | tee report.txt
+            grafana/k6 run --quiet /app/tests.js | tee report.txt
 
           cat <<EOF >> $GITHUB_STEP_SUMMARY
           ## Tests
