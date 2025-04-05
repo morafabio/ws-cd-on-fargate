@@ -69,24 +69,24 @@ jobs:
       - name: Tests / setup
         run: |
           docker network create test-network
-          container_id=$(docker run --name app -d -p ${BASE_PORT}:${BASE_PORT} ${{ secrets.DOCKERHUB_USERNAME }}/app-web:latest)
+          container_id=$(docker run -d --name ${BASE_HOST} -p ${BASE_PORT}:${BASE_PORT} ${{ secrets.DOCKERHUB_USERNAME }}/app-web:latest)
           cat <<EOF >> $GITHUB_STEP_SUMMARY
           ## Test
           \`\`\`
           Container ID: $container_id
           \`\`\`
           EOF
-
+          
           timeout=10
           counter=0
           until [ "$(curl -o /dev/null -s -w '%{http_code}' http://${BASE_HOST}:${BASE_PORT}/)" -eq 200 ]; do
+            sleep 1
             counter=$((counter+1))
             if [ $counter -ge $timeout ]; then
               echo "## Error: Service did not respond within ${timeout}s." >> $GITHUB_STEP_SUMMARY
               docker logs "$container_id" && docker stop "$container_id"
               exit 1
             fi
-            sleep 1
           done
 
       - name: Tests / End-to-End
