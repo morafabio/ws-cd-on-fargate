@@ -2,12 +2,17 @@
 set -eu -o pipefail
 
 # options
-ACTION="${1:-}"
-ENV="${2:-infra}"
+STACK="${1:-app}"
+ENV="${2:-dev}"
+ACTION="${3:-}"
 
 # config
 TERRAFORM_IMAGE="hashicorp/terraform:1.11"
-WORKDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/${STACK}"
+
+# check
+file "${WORKDIR}/"
+file "${WORKDIR}/vars/${ENV}.tfvars"
 
 # actions
 run_terraform() {
@@ -25,6 +30,7 @@ run_terraform() {
 }
 
 # main
+echo "[$WORKDIR] ENV: ${ENV}, STACK: ${STACK}"
 case "${ACTION}" in
   plan)
     run_terraform init
