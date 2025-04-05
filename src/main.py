@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
 import time, socket, hashlib, base64, json
 
@@ -10,6 +10,12 @@ class PrettyJSONResponse(JSONResponse):
         return json.dumps(content, indent=2).encode("utf-8")
 
 app = FastAPI(default_response_class=PrettyJSONResponse)
+
+@app.middleware("http")
+async def add_version_header(request: Request, call_next):
+    response: Response = await call_next(request)
+    response.headers["X-API-Version"] = "1.0"
+    return response
 
 @app.get("/")
 def root():
