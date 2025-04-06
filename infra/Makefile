@@ -15,7 +15,7 @@ ENV_VARS = -e STACK="$(STACK)" -e ENV="$(ENV)" \
 	-e AWS_SECRET_ACCESS_KEY="$${AWS_SECRET_ACCESS_KEY:-}"
 
 define RUN_TERRAFORM
-docker run -ti --rm \
+docker run -i --rm \
     --volume "$(WORKDIR):/app" \
     $(ENV_VARS) \
     $(TERRAFORM_IMAGE) -chdir="/app" $(1) -var-file="vars/$(ENV).tfvars"
