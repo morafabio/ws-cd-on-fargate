@@ -34,17 +34,18 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Configure
-        run: |
-          cp -v infra/vars/infra.tfvars.dist infra/vars/infra.tfvars
-
-      - name: Run Terraform
+      - name: Terraform/Plan - common
         env:
-          TF_VAR_GITHUB_TOKEN: ${{ secrets.TF_VAR_GITHUB_TOKEN }}
+          STACK: "common"
+          ENV: "dev"
+          ACTION: "${{ github.event.inputs.action }}"
+          # tfvars
+          TF_VAR_dockerhub_username: "${{ secrets.TF_VAR_GITHUB_TOKEN }}"
+          TF_VAR_dockerhub_token: "${{ secrets.TF_VAR_GITHUB_TOKEN }}"
+          TF_VAR_github_token: "${{ secrets.TF_VAR_GITHUB_TOKEN }}"
+          AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
         run: |
-          ACTION="${{ github.event.inputs.action }}"
-          if [ -z "$ACTION" ]; then
-            ACTION="plan"
-          fi
-          echo "Running terraform action: $ACTION"
-          ./infra/run "$ACTION"
+          cd infra/
+          touch "stacks/$STACK/vars/${ENV}.tfvars"
+          make plan STACK="${STACK}" ENV="${ENV}"

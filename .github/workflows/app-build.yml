@@ -3,6 +3,10 @@ name: app/build
 on:
   push:
     branches: [ master ]
+    paths:
+      - build/**
+      - src/**
+      - test/**
   pull_request:
     branches: [ master ]
 

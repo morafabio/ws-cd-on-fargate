@@ -3,6 +3,7 @@ resource "aws_lb" "app_lb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
   subnets            = [aws_subnet.public.id]
+  count = 0
 }
 
 resource "aws_security_group" "alb_sg" {

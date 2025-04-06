@@ -1,14 +1,14 @@
 resource "aws_ecs_service" "web" {
   name            = "${local.app.name}-web"
 
-  cluster         = aws_ecs_cluster.main.id
+  cluster         = data.terraform_remote_state.common.outputs.aws_ecs_cluster-main-id
   task_definition = aws_ecs_task_definition.app_web.arn
   desired_count   = local.app.desired_count
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets         = [aws_subnet.public.id]
-    security_groups = [aws_security_group.alb_sg.id]
+    subnets         = [data.terraform_remote_state.common.outputs.aws_subnet-public_id]
+    security_groups = [data.terraform_remote_state.common.outputs.aws_security_group-alb_sg-id]
     assign_public_ip = false
   }
 
@@ -44,7 +44,7 @@ resource "aws_lb_target_group" "tg" {
   name        = "${local.app.name}-web"
   port        = 8080
   protocol    = "HTTP"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = data.terraform_remote_state.common.outputs.aws_vpc-main-id
   target_type = "ip"
 
   health_check {
@@ -57,12 +57,30 @@ resource "aws_lb_target_group" "tg" {
 }
 
 resource "aws_lb_listener" "listener" {
-  load_balancer_arn = aws_lb.app_lb.arn
+  load_balancer_arn = data.terraform_remote_state.common.outputs.aws_lb-app_lb-arn
   port              = 80
   protocol          = "HTTP"
+  count = 0
 
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.tg.arn
   }
+}
+
+resource "aws_iam_role" "ecs_task_execution_role" {
+  name = "ecsTaskExecutionRole"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect    = "Allow",
+      Principal = { Service = "ecs-tasks.amazonaws.com" },
+      Action    = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
