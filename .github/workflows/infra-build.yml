@@ -49,9 +49,9 @@ jobs:
         run: |
           echo "STACKS: ${STACKS}"
           IFS=',' read -r -a stack_array <<< "$STACKS"
+          cd infra/
           for STACK in "${stack_array[@]}"; do
             echo "[${ACTION}] STACK="${STACK}" ENV="${ENV}""
-            cd infra/
             touch "stacks/$STACK/vars/${ENV}.tfvars"
             make "${ACTION}" STACK="${STACK}" ENV="${ENV}"
           done
