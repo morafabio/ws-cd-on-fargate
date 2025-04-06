@@ -46,8 +46,8 @@ resource "github_actions_secret" "aws_secret_access_key" {
   plaintext_value = var.aws_secret_access_key
 }
 
-resource "github_actions_secret" "aws_region" {
+resource "github_actions_secret" "aws_default_region" {
   repository      = github_repository.ws_cd_on_fargate.name
-  secret_name     = "AWS_REGION"
+  secret_name     = "AWS_DEFAULT_REGION"
   plaintext_value = var.aws_region
 }
