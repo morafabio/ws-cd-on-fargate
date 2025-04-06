@@ -9,9 +9,10 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_subnet" "public" {
+  count                   = length(local.network.public_subnet_cidrs)
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = local.network.public_subnet_cidr
-  availability_zone       = local.network.availability_zone
+  cidr_block              = local.network.public_subnet_cidrs[count.index]
+  availability_zone       = local.network.availability_zones[count.index]
   map_public_ip_on_launch = true
 }
 
@@ -26,6 +27,7 @@ resource "aws_route" "public_internet_access" {
 }
 
 resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.public.id
+  for_each = { for idx, subnet in aws_subnet.public : idx => subnet.id }
+  subnet_id      = each.value
   route_table_id = aws_route_table.public.id
 }

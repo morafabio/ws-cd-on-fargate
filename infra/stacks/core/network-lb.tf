@@ -1,14 +1,14 @@
 resource "aws_lb" "app_lb" {
-  name               = "${local.org-name}-lb"
+  name               = "${local.org_name}-lb"
   count              = local.enable_alb ? 1 : 0
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [aws_subnet.public.id]
+  subnets            = aws_subnet.public[*].id
 }
 
 resource "aws_security_group" "alb_sg" {
-  name        = "alb-sg"
-  vpc_id      = aws_vpc.main.id
+  name   = "alb-sg"
+  vpc_id = aws_vpc.main.id
 
   ingress {
     from_port = 8080
@@ -16,6 +16,7 @@ resource "aws_security_group" "alb_sg" {
     protocol  = "tcp"
     self      = true
   }
+
   egress {
     from_port   = 0
     to_port     = 0
