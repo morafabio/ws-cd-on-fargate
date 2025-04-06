@@ -1,12 +1,17 @@
 name: infra/build
 
 on:
-  #  push:
-  #    paths:
-  #      - "infra/**"
-  #      - ".github/workflows/infra-**"
   workflow_dispatch:
     inputs:
+      stack:
+        type: choice
+        options:
+          - app
+          - common
+          - core
+        required: false
+        description: 'terraform stack'
+        default: 'common'
       action:
         type: choice
         options:
@@ -18,7 +23,7 @@ on:
 
 concurrency:
   group: infra-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   terraform:
@@ -46,6 +51,7 @@ jobs:
           AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
           AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
         run: |
+          echo "[${ACTION}] STACK="${STACK}" ENV="${ENV}""
           cd infra/
           touch "stacks/$STACK/vars/${ENV}.tfvars"
-          make plan STACK="${STACK}" ENV="${ENV}"
+          make "${ACTION}" STACK="${STACK}" ENV="${ENV}"
