@@ -18,6 +18,6 @@ output "aws_vpc-main-id" {
   value = aws_vpc.main.id
 }
 
-# output "aws_lb-app_lb-arn" {
-#   value = aws_lb.app_lb.arn
-# }
+output "aws_lb-app_lb-arn" {
+  value = local.enable_alb && length(aws_lb.app_lb) > 0 ? aws_lb.app_lb[0].arn : null
+}

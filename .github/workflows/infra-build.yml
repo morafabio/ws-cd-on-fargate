@@ -3,15 +3,11 @@ name: infra/build
 on:
   workflow_dispatch:
     inputs:
-      stack:
-        type: choice
-        options:
-          - app
-          - common
-          - core
+      stacks:
+        description: 'Terraform stacks (comma-separated, available: app, common, core)'
         required: false
-        description: 'terraform stack'
-        default: 'common'
+        default: 'common,core'
+        #default: 'common,core,app'
       action:
         type: choice
         options:
@@ -47,11 +43,15 @@ jobs:
 
       - name: Terraform run
         env:
-          STACK: "common"
           ENV: "dev"
           ACTION: "${{ github.event.inputs.action }}"
+          STACKS: "${{ github.event.inputs.stacks }}"
         run: |
-          echo "[${ACTION}] STACK="${STACK}" ENV="${ENV}""
-          cd infra/
-          touch "stacks/$STACK/vars/${ENV}.tfvars"
-          make "${ACTION}" STACK="${STACK}" ENV="${ENV}"
+          echo "STACKS: ${STACKS}"
+          IFS=',' read -r -a stack_array <<< "$STACKS"
+          for STACK in "${stack_array[@]}"; do
+            echo "[${ACTION}] STACK="${STACK}" ENV="${ENV}""
+            cd infra/
+            touch "stacks/$STACK/vars/${ENV}.tfvars"
+            make "${ACTION}" STACK="${STACK}" ENV="${ENV}"
+          done
