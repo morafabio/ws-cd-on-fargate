@@ -17,6 +17,9 @@ resource "github_actions_secret" "tf_var_github_token" {
   repository      = github_repository.ws_cd_on_fargate.name
   secret_name     = "TF_VAR_GITHUB_TOKEN"
   plaintext_value = var.github_token
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "github_actions_secret" "dockerhub_token" {
