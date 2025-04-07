@@ -9,6 +9,7 @@ on:
       - test/**
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 concurrency:
   group: infra-${{ github.ref }}
