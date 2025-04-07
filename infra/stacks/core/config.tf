@@ -1,7 +1,7 @@
 locals {
   org_name   = "tf"
 
-  enable_alb = true
+  enable_alb = false
 
   network = {
     vpc_cidr            = "10.0.0.0/16"
