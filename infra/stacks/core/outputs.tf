@@ -14,6 +14,10 @@ output "aws_security_group_alb_sg_id" {
   value = aws_security_group.alb_sg.id
 }
 
+output "aws_lb_listener_lb_http_arn" {
+  value = aws_lb_listener.lb_http.arn
+}
+
 output "aws_vpc_main_id" {
   value = aws_vpc.main.id
 }

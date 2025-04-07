@@ -1,5 +1,5 @@
 locals {
-  org-name = data.terraform_remote_state.common.outputs.org-name
+  org-name = data.terraform_remote_state.common.outputs.org_name
 
   app = {
     name = "app-cd-on-fargate"

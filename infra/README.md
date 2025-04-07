@@ -10,6 +10,9 @@ aws s3 ls | grep techeffe-terraform
 ```
 
 ```shell
-make plan STACK=common
+source ~/dev/aws-tf.sh
+make apply STACK=common
+make apply STACK=core
+make apply STACK=app
 ```
 

@@ -122,3 +122,16 @@ jobs:
 #          $(cat report.txt)
 #          \`\`\`
 #          EOF
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: tf/app-cd-on-fargate/web
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker tag app-web:latest $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
