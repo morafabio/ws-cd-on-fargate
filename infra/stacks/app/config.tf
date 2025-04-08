@@ -3,7 +3,7 @@ locals {
 
   app = {
     name = "app-cd-on-fargate"
-    desired_count = 0
+    desired_count = 1
   }
 }
 

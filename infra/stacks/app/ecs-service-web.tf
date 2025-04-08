@@ -6,6 +6,10 @@ resource "aws_ecs_service" "web" {
   desired_count   = local.app.desired_count
   launch_type     = "FARGATE"
 
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
+
   network_configuration {
     subnets         = data.terraform_remote_state.common.outputs.aws_subnet_public_ids
     security_groups = [data.terraform_remote_state.common.outputs.aws_security_group_alb_sg_id]
@@ -31,7 +35,7 @@ resource "aws_ecs_task_definition" "app_web" {
   container_definitions = jsonencode([
     {
       name      = "app"
-      image     = "${aws_ecr_repository.app_web.repository_url}:486baf03a79665d3afacc61406d0a324bd6c86ec"
+      image     = "${aws_ecr_repository.app_web.repository_url}:dev"
       essential = true
       healthCheck = {
         command     = ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
