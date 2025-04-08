@@ -2,7 +2,7 @@ locals {
   org-name = data.terraform_remote_state.common.outputs.org_name
 
   app = {
-    name = "app-cd-on-fargate"
+    name          = "app-cd-on-fargate"
     desired_count = 0
   }
 }

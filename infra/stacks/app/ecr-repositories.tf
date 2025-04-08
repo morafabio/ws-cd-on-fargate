@@ -9,8 +9,8 @@ resource "aws_ecr_lifecycle_policy" "lpa_webapp_policy" {
     rules = [
       {
         rulePriority = 10,
-        selection = { tagStatus = "any", countType = "imageCountMoreThan", countNumber = 3 },
-        action = { type = "expire" }
+        selection    = { tagStatus = "any", countType = "imageCountMoreThan", countNumber = 3 },
+        action       = { type = "expire" }
       }
     ]
   })

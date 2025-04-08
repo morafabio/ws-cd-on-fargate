@@ -27,7 +27,7 @@ on:
           - 'true'
           - 'false'
         required: true
-        default: 'false'
+        default: 'true'
 
 concurrency:
   group: infra-${{ github.ref }}
