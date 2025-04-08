@@ -97,7 +97,7 @@ jobs:
       - name: Tests / Setup
         run: |
           docker network create test-network
-          container_id=$(docker run -d --name ${BASE_HOST} -p ${BASE_PORT}:${BASE_PORT} app-web:latest)
+          container_id=$(docker run -d --name ${BASE_HOST} --network test-network -p ${BASE_PORT}:${BASE_PORT} app-web:latest)
           timeout=10
           counter=0
           until [ "$(curl -o /dev/null -s -w '%{http_code}' http://localhost:${BASE_PORT}/health)" -eq 200 ]; do
