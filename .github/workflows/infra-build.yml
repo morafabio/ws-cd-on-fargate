@@ -54,8 +54,8 @@ jobs:
       - name: Terraform run
         env:
           ENV: "dev"
-          ACTION: "${{ github.event.inputs.action }}"
-          STACKS: "${{ github.event.inputs.stacks }}"
+          ACTION: "${{ github.event.inputs.action || 'plan' }}"
+          STACKS: "${{ github.event.inputs.stacks || 'core,app' }}"
         run: |
           echo "STACKS: ${STACKS}"
           IFS=',' read -r -a stack_array <<< "$STACKS"
