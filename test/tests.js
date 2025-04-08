@@ -21,9 +21,9 @@ const testCases = [
 
 export default function () {
   group("Health Check", () => {
-    let res = http.get(`${baseUrl}/`);
+    let res = http.get(`${baseUrl}/health`);
     check(res, {
-      "GET / status is 200": (r) => r.status === 200,
+      "GET /health status is 200": (r) => r.status === 200,
       "Content-Type is application/json": (r) => r.headers["Content-Type"] && r.headers["Content-Type"].includes("application/json"),
       "uptime_seconds exists": (r) => r.json().hasOwnProperty("uptime_seconds"),
       "hostname exists": (r) => r.json().hasOwnProperty("hostname"),
@@ -35,7 +35,7 @@ export default function () {
       let payload = JSON.stringify({ text: tc.text });
       let headers = {
         "Content-Type": "application/json",
-        "X-Test-Header": "k6-test" // Custom header for testing purposes
+        "X-Test-Header": "k6-test"
       };
       let res = http.post(`${baseUrl}/hash`, payload, { headers: headers });
 
