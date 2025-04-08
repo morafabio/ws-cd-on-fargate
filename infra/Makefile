@@ -68,6 +68,11 @@ destroy: check
 	$(call RUN_TERRAFORM,init)
 	$(call RUN_TERRAFORM,destroy -auto-approve -var-file="vars/$(ENV).tfvars")
 
+show: check
+	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
+	$(call RUN_TERRAFORM,init)
+	$(call RUN_TERRAFORM,show)
+
 shell:
 	docker run --rm -ti \
 	  --volume "$(shell pwd):/app" \

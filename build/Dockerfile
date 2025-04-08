@@ -12,6 +12,10 @@ FROM python:3.11-slim AS app
 COPY --from=builder /usr/local /usr/local
 COPY src/ /app
 
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y curl && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 RUN adduser --disabled-password --gecos "" appuser && \
