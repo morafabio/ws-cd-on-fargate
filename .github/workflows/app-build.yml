@@ -27,7 +27,7 @@ on:
           - 'true'
           - 'false'
         required: true
-        default: 'true'
+        default: 'false'
 
 concurrency:
   group: infra-${{ github.ref }}
@@ -128,7 +128,7 @@ jobs:
           EOF
 
       - name: Tests / End-to-End
-        if: ${{ github.event.inputs.run_e2e_tests == 'true' }}
+        if: ${{ github.event.inputs.run_e2e_tests == 'true' || 'true' }}
         run: |
           tests=$(docker run --rm --network test-network \
             -v "$(pwd)/test/tests.js:/app/tests.js" \
