@@ -19,7 +19,7 @@ define RUN_TERRAFORM
 docker run -i --rm \
     --volume "$(WORKDIR):/app" \
     $(ENV_VARS) \
-    $(TERRAFORM_IMAGE) -chdir="/app" $(1) -var-file="vars/$(ENV).tfvars"
+    $(TERRAFORM_IMAGE) -chdir="/app" $(1)
 endef
 
 # Check required files
@@ -31,22 +31,43 @@ check:
 plan: check
 	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
 	$(call RUN_TERRAFORM,init)
-	$(call RUN_TERRAFORM,plan)
+	$(call RUN_TERRAFORM,plan -var-file="vars/$(ENV).tfvars")
 
 apply: check
 	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
 	$(call RUN_TERRAFORM,init)
-	$(call RUN_TERRAFORM,apply -auto-approve)
+	$(call RUN_TERRAFORM,apply -auto-approve -var-file="vars/$(ENV).tfvars")
 
 import: check
 	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
 	$(call RUN_TERRAFORM,init)
 	$(call RUN_TERRAFORM,import $(IMPORT_ARG))
 
+state-pull: check
+	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
+	$(call RUN_TERRAFORM,init)
+	$(call RUN_TERRAFORM,state pull > $(STACK).tfstate)
+
+graph: check
+	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
+	$(call RUN_TERRAFORM,init)
+	mkdir -p graphs/
+	$(call RUN_TERRAFORM,graph -type=plan> graphs/$(STACK).dot)
+
+inframap: check state-pull
+	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
+	$(call RUN_TERRAFORM,init)
+	mkdir -p graphs/
+	docker run --rm -i \
+		  --volume "$(shell pwd):/app" \
+		  --entrypoint "/bin/ash" \
+		  cycloid/inframap \
+		  -c "./inframap generate /app/$(STACK).tfstate | dot -Tpng > /app/graphs/$(STACK)-inframap.png"
+
 destroy: check
 	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
 	$(call RUN_TERRAFORM,init)
-	$(call RUN_TERRAFORM,destroy -auto-approve)
+	$(call RUN_TERRAFORM,destroy -auto-approve -var-file="vars/$(ENV).tfvars")
 
 shell:
 	docker run --rm -ti \

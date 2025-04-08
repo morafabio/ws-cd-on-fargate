@@ -4,6 +4,7 @@
 **/*.tfstate*
 **/*.tfvars
 !**/*.dist
+infra/graphs/*.dot
 
 # app
 src/__pycache__/**
