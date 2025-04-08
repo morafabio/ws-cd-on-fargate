@@ -63,12 +63,12 @@ jobs:
           for STACK in "${stack_array[@]}"; do
             echo "[${ACTION}] STACK="${STACK}" ENV="${ENV}""
             touch "stacks/$STACK/vars/${ENV}.tfvars"
-            OUT=$(make "${ACTION}" STACK="${STACK}" ENV="${ENV}")
-            echo "${OUT}"
+            $response=$(make "${ACTION}" STACK="${STACK}" ENV="${ENV}")
+            echo "${response}"
             cat <<EOF >> $GITHUB_STEP_SUMMARY
-            ## Terraform out for ${STACK}
+            ## GET /health
             \`\`\`
-            ${OUT}
+            $response
             \`\`\`
             EOF
           done
