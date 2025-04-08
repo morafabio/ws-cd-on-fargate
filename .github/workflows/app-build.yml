@@ -128,6 +128,7 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
+        if: ${{ success() && github.event.inputs.deploy == 'true' }}
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
@@ -139,7 +140,7 @@ jobs:
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
-        if: ${{ github.event.inputs.deploy == 'true' }}
+        if: ${{ success() && github.event.inputs.deploy == 'true' }}
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.CONTAINER_NAME }}
@@ -147,7 +148,7 @@ jobs:
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        if: ${{  github.event.inputs.deploy == 'true' }}
+        if: ${{ success() && github.event.inputs.deploy == 'true' }}
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
