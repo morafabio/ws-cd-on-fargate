@@ -130,9 +130,15 @@ jobs:
       - name: Tests / End-to-End
         if: ${{ github.event.inputs.run_e2e_tests == 'true' }}
         run: |
-          docker run --rm --network test-network \
+          tests=$(docker run --rm --network test-network \
             -v "$(pwd)/test/tests.js:/app/tests.js" \
-            grafana/k6 run /app/tests.js
+            grafana/k6 run /app/tests.js)
+          cat <<EOF >> $GITHUB_STEP_SUMMARY
+          ## End-to-End
+          \`\`\`
+          $tests
+          \`\`\`
+          EOF
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
