@@ -4,9 +4,9 @@ on:
   push:
     branches: [ master ]
     paths:
+      - .github/workflows/app-build.yml
       - build/**
       - src/**
-      - test/**
   pull_request:
     branches: [ master ]
   workflow_dispatch:
@@ -76,27 +76,10 @@ jobs:
           context: .
           target: app
 
-      - name: Docker / package
-        run: |
-          IMAGE_ID=$(docker images --format "{{.ID}}" app-web:latest | head -n 1)
-          cat <<EOF >> $GITHUB_STEP_SUMMARY
-          ## Package
-          \`\`\`
-          Image ID: $IMAGE_ID
-          Image Tag: app-web:latest
-          \`\`\`
-          EOF
-
-      - name: Tests / setup
+      - name: Tests / Setup
         run: |
           docker network create test-network
           container_id=$(docker run -d --name ${BASE_HOST} -p ${BASE_PORT}:${BASE_PORT} app-web:latest)
-          cat <<EOF >> $GITHUB_STEP_SUMMARY
-          ## Test
-          \`\`\`
-          Container ID: $container_id
-          \`\`\`
-          EOF
           timeout=10
           counter=0
           until [ "$(curl -o /dev/null -s -w '%{http_code}' http://localhost:${BASE_PORT}/health)" -eq 200 ]; do
