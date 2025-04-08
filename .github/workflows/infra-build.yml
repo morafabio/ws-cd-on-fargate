@@ -63,12 +63,5 @@ jobs:
           for STACK in "${stack_array[@]}"; do
             echo "[${ACTION}] STACK="${STACK}" ENV="${ENV}""
             touch "stacks/$STACK/vars/${ENV}.tfvars"
-            $response=$(make "${ACTION}" STACK="${STACK}" ENV="${ENV}")
-            echo "${response}"
-            cat <<EOF >> $GITHUB_STEP_SUMMARY
-            ## GET /health
-            \`\`\`
-            $response
-            \`\`\`
-            EOF
+            make "${ACTION}" STACK="${STACK}" ENV="${ENV}"
           done
