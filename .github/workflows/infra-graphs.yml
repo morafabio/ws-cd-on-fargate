@@ -6,7 +6,7 @@ on:
       stacks:
         description: 'Terraform stacks (comma-separated, available: app, common, core)'
         required: false
-        default: 'common'
+        default: 'common,app,core'
 
 concurrency:
   group: infra-${{ github.ref }}
@@ -37,7 +37,7 @@ jobs:
       - name: Terraform state-pull
         env:
           ENV: "dev"
-          ACTION: "inframap"
+          ACTION: "graph-png"
           STACKS: "${{ github.event.inputs.stacks }}"
         run: |
           echo "STACKS: ${STACKS}"
