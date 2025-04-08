@@ -13,12 +13,20 @@ on:
   workflow_dispatch:
     inputs:
       deploy:
-        description: 'Do deploy (true or false)'
-        required: false
+        type: choice
+        description: 'Do deploy?'
+        options:
+          - 'true'
+          - 'false'
+        required: true
         default: 'false'
       run_e2e_tests:
-        description: 'Toggle E2E tests (true or false)'
-        required: false
+        type: choice
+        description: 'Run E2E tests'
+        options:
+          - 'true'
+          - 'false'
+        required: true
         default: 'false'
 
 concurrency:
