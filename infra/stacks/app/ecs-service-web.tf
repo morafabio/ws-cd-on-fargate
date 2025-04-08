@@ -34,7 +34,7 @@ resource "aws_ecs_task_definition" "app_web" {
       image     = "${aws_ecr_repository.app_web.repository_url}:486baf03a79665d3afacc61406d0a324bd6c86ec"
       essential = true
       healthCheck = {
-        command     = ["CMD-SHELL", "curl -f http://localhost:8080/ || exit 1"]
+        command     = ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
         interval    = 15
         timeout     = 5
         retries     = 3

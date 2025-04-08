@@ -6,7 +6,7 @@ resource "aws_lb_target_group" "ecs_tg" {
   target_type = "ip"
 
   health_check {
-    path                = "/"
+    path                = "/health"
     protocol            = "HTTP"
     interval            = 30
     healthy_threshold   = 3
@@ -25,7 +25,7 @@ resource "aws_lb_listener_rule" "app_rule" {
 
   condition {
     path_pattern {
-      values = ["/app*"]
+      values = ["/*"]
     }
   }
 }

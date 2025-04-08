@@ -17,7 +17,7 @@ async def add_version_header(request: Request, call_next):
     response.headers["X-API-Version"] = "1.0"
     return response
 
-@app.get("/")
+@app.get("/health")
 def root():
     uptime = round(time.time() - start_time, 2)
     return {

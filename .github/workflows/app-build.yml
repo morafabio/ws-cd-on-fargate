@@ -94,7 +94,7 @@ jobs:
           EOF
           timeout=10
           counter=0
-          until [ "$(curl -o /dev/null -s -w '%{http_code}' http://localhost:${BASE_PORT}/)" -eq 200 ]; do
+          until [ "$(curl -o /dev/null -s -w '%{http_code}' http://localhost:${BASE_PORT}/health)" -eq 200 ]; do
             counter=$((counter+1))
             if [ $counter -ge $timeout ]; then
               echo "## Error: Service did not respond within ${timeout}s." >> $GITHUB_STEP_SUMMARY
@@ -106,9 +106,9 @@ jobs:
 
       - name: Tests / Functional
         run: |
-          response=$(curl -s http://localhost:${BASE_PORT}/)
+          response=$(curl -s http://localhost:${BASE_PORT}/health)
           cat <<EOF >> $GITHUB_STEP_SUMMARY
-          ## GET /
+          ## GET /health
           \`\`\`
           $response
           \`\`\`
@@ -120,20 +120,6 @@ jobs:
           $response
           \`\`\`
           EOF
-
-      #      - name: Tests / End-to-End
-      #        run: |
-      #          docker run --rm --network test-network \
-      #            -v "$(pwd)/test/tests.js:/app/tests.js" \
-      #            -e BASE_URL="${BASE_URL}:${BASE_PORT}" \
-      #            grafana/k6 run --quiet /app/tests.js | tee report.txt
-      #
-      #          cat <<EOF >> $GITHUB_STEP_SUMMARY
-      #          ## Tests
-      #          \`\`\`
-      #          $(cat report.txt)
-      #          \`\`\`
-      #          EOF
 
       - name: Push docker image to Amazon ECR
         env:

@@ -20,7 +20,7 @@ docker run --rm -ti -p 8080:8080 -v "$(pwd)/src:/app" app-cd-on-fargate/web:test
 
 Root:
 ```shell
-curl localhost:8080/
+curl localhost:8080/health
 ```
 
 Hash:
