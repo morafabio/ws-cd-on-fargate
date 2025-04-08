@@ -57,12 +57,11 @@ graph: check
 inframap: check state-pull
 	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
 	$(call RUN_TERRAFORM,init)
-	mkdir -p graphs/
 	docker run --rm -i \
 		  --volume "$(shell pwd):/app" \
 		  --entrypoint "/bin/ash" \
 		  cycloid/inframap \
-		  -c "./inframap generate /app/$(STACK).tfstate | dot -Tpng > /app/graphs/$(STACK)-inframap.png"
+		  -c "mkdir -p /app/graphs/; ./inframap generate /app/$(STACK).tfstate | dot -Tpng > /app/graphs/$(STACK)-inframap.png"
 
 destroy: check
 	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
