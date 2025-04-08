@@ -1,0 +1,57 @@
+name: infra/graphs
+
+on:
+  workflow_dispatch:
+    inputs:
+      stacks:
+        description: 'Terraform stacks (comma-separated, available: app, common, core)'
+        required: false
+        default: 'common'
+
+concurrency:
+  group: infra-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_github_token: "${{ secrets.TF_VAR_GITHUB_TOKEN }}"
+      TF_VAR_dockerhub_username: "${{ secrets.DOCKERHUB_USERNAME }}"
+      TF_VAR_dockerhub_token: "${{ secrets.DOCKERHUB_TOKEN }}"
+      TF_VAR_aws_region: "${{ secrets.AWS_DEFAULT_REGION }}"
+      AWS_DEFAULT_REGION: "${{ secrets.AWS_DEFAULT_REGION }}"
+      AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+      AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Terraform run
+        env:
+          ENV: "dev"
+          ACTION: "inframap"
+          STACKS: "${{ github.event.inputs.stacks }}"
+        run: |
+          echo "STACKS: ${STACKS}"
+          IFS=',' read -r -a stack_array <<< "$STACKS"
+          cd infra/
+          for STACK in "${stack_array[@]}"; do
+            echo "[${ACTION}] STACK="${STACK}" ENV="${ENV}""
+            touch "stacks/$STACK/vars/${ENV}.tfvars"
+            make "${ACTION}" STACK="${STACK}" ENV="${ENV}"
+          done
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-graphs
+          path: |
+            infra/graphs/
