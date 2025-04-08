@@ -157,6 +157,7 @@ jobs:
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         if: ${{ success() && github.event.inputs.deploy == 'true' }}
+        #if: ${{ success() && ( github.event.inputs.deploy == 'true' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/') ) }}
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
