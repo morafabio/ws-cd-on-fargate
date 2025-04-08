@@ -33,8 +33,18 @@ curl -X POST -d '{"text": "¡Este producto es fantástico!"}' http://localhost:8
 
 #### Features
 
+Run:
+```shell
+docker network create test-network || true
+docker run --rm -ti \
+  --network test-network \
+  --name app -p 8080:8080 -v "$(pwd)/src:/app" \
+  app-cd-on-fargate/web:test
+```
+
 ```shell
 docker run --rm -ti \
-  -v "$(pwd)/test/features.js:/app/tests.js" \
+  --network test-network \
+  -v "$(pwd)/test/tests.js:/app/tests.js" \
   grafana/k6 run /app/tests.js
 ```

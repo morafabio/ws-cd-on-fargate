@@ -10,7 +10,7 @@ export let options = {
   },
 };
 
-const baseUrl = __ENV.BASE_URL || 'http://127.0.0.1:8080';
+const baseUrl = __ENV.BASE_URL || 'http://app:8080';
 
 const testCases = [
   { description: "Valid text", text: "I absolutely love this!", expectError: false },

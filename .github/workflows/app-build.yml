@@ -4,12 +4,22 @@ on:
   push:
     branches: [ master ]
     paths:
-      - .github/workflows/app-build.yml
+      - .github/workflows/app-*
       - build/**
       - src/**
+      - test/**
   pull_request:
     branches: [ master ]
   workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Do deploy (true or false)'
+        required: false
+        default: 'false'
+      run_e2e_tests:
+        description: 'Toggle E2E tests (true or false)'
+        required: false
+        default: 'false'
 
 concurrency:
   group: infra-${{ github.ref }}
@@ -103,11 +113,19 @@ jobs:
           EOF
           response=$(curl -v -X POST -d '{"text": "I absolutely love this!"}' http://localhost:${BASE_PORT}/hash)
           cat <<EOF >> $GITHUB_STEP_SUMMARY
-          ## POST /hash
+          ## POST /hash 
           \`\`\`
           $response
           \`\`\`
           EOF
+
+      - name: Run End-to-End Tests (k6)
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_e2e_tests == 'true' }}
+        run: |
+          docker run --rm -ti \
+            --network test-network \
+            -v "$(pwd)/test/tests.js:/app/tests.js" \
+            grafana/k6 run /app/tests.js
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
@@ -122,6 +140,7 @@ jobs:
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.deploy == 'true' }}
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.CONTAINER_NAME }}
@@ -129,6 +148,7 @@ jobs:
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.deploy == 'true' }}
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
