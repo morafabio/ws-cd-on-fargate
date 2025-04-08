@@ -119,11 +119,10 @@ jobs:
           \`\`\`
           EOF
 
-      - name: Run End-to-End Tests (k6)
-        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_e2e_tests == 'true' }}
+      - name: Tests / End-to-End
+        if: ${{ github.event.inputs.run_e2e_tests == 'true' }}
         run: |
-          docker run --rm -ti \
-            --network test-network \
+          docker run --rm --network test-network \
             -v "$(pwd)/test/tests.js:/app/tests.js" \
             grafana/k6 run /app/tests.js
 
@@ -140,7 +139,7 @@ jobs:
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
-        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.deploy == 'true' }}
+        if: ${{ github.event.inputs.deploy == 'true' }}
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.CONTAINER_NAME }}
@@ -148,7 +147,7 @@ jobs:
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.deploy == 'true' }}
+        if: ${{  github.event.inputs.deploy == 'true' }}
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
