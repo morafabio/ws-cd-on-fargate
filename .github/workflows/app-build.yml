@@ -21,6 +21,11 @@ jobs:
     env:
       BASE_HOST: app
       BASE_PORT: 8080
+      ECS_CLUSTER: tf-dev
+      ECS_SERVICE: app-cd-on-fargate-web
+      ECS_TASK_DEFINITION: build/task-definition.json
+      ECR_REPOSITORY_NAME: tf/app-cd-on-fargate/web
+      CONTAINER_NAME: app
 
     steps:
       - name: Checkout
@@ -121,11 +126,28 @@ jobs:
           \`\`\`
           EOF
 
-      - name: Push docker image to Amazon ECR
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: tf/app-cd-on-fargate/web
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker tag app-web:latest $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag app-web:latest $REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG
+          docker push $REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG
+          echo "image=$REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@69e7aed9b8acdd75a6c585ac669c33831ab1b9a3
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
