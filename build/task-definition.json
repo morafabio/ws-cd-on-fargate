@@ -1,67 +1,42 @@
 {
-    "containerDefinitions": [
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "908643328117.dkr.ecr.us-east-1.amazonaws.com/tf/app-cd-on-fargate/web:dev",
+      "cpu": 0,
+      "portMappings": [
         {
-            "name": "app",
-            "image": "908643328117.dkr.ecr.us-east-1.amazonaws.com/tf/app-cd-on-fargate/web:dev",
-            "cpu": 0,
-            "portMappings": [
-                {
-                    "containerPort": 8080,
-                    "hostPort": 8080,
-                    "protocol": "tcp"
-                }
-            ],
-            "essential": true,
-            "environment": [],
-            "mountPoints": [],
-            "volumesFrom": [],
-            "healthCheck": {
-                "command": [
-                    "CMD-SHELL",
-                    "curl -f http://localhost:8080/health || exit 1"
-                ],
-                "interval": 15,
-                "timeout": 5,
-                "retries": 3,
-                "startPeriod": 5
-            },
-            "systemControls": []
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp"
         }
-    ],
-    "family": "app-cd-on-fargate-web",
-    "executionRoleArn": "arn:aws:iam::908643328117:role/ecsTaskExecutionRole",
-    "networkMode": "awsvpc",
-    "revision": 7,
-    "volumes": [],
-    "requiresAttributes": [
-        {
-            "name": "com.amazonaws.ecs.capability.ecr-auth"
-        },
-        {
-            "name": "ecs.capability.container-health-check"
-        },
-        {
-            "name": "ecs.capability.execution-role-ecr-pull"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-        },
-        {
-            "name": "ecs.capability.task-eni"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
-        }
-    ],
-    "placementConstraints": [],
-    "compatibilities": [
-        "EC2",
-        "FARGATE"
-    ],
-    "requiresCompatibilities": [
-        "FARGATE"
-    ],
-    "cpu": "256",
-    "memory": "512",
-    "tags": []
+      ],
+      "essential": true,
+      "environment": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:8080/health || exit 1"
+        ],
+        "interval": 15,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 5
+      },
+      "systemControls": []
+    }
+  ],
+  "family": "app-cd-on-fargate-web",
+  "executionRoleArn": "arn:aws:iam::908643328117:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "volumes": [],
+  "placementConstraints": [],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "256",
+  "memory": "512",
+  "tags": []
 }
