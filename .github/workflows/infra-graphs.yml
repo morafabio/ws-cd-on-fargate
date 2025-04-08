@@ -37,7 +37,7 @@ jobs:
       - name: Terraform state-pull
         env:
           ENV: "dev"
-          ACTION: "state-pull"
+          ACTION: "inframap"
           STACKS: "${{ github.event.inputs.stacks }}"
         run: |
           echo "STACKS: ${STACKS}"
