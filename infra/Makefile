@@ -48,20 +48,20 @@ state-pull: check
 	$(call RUN_TERRAFORM,init)
 	$(call RUN_TERRAFORM,state pull > $(STACK).tfstate)
 
+inframap: check state-pull
+	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
+	$(call RUN_TERRAFORM,init)
+	docker run --rm -i -u $(id -u):$(id -g) \
+		  --volume "$(shell pwd):/app" \
+		  --entrypoint "/bin/ash" \
+		  cycloid/inframap \
+		  -c "mkdir -p /app/graphs/; ./inframap generate /app/$(STACK).tfstate | dot -Tpng > /app/graphs/$(STACK)-inframap.png"
+
 graph: check
 	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
 	$(call RUN_TERRAFORM,init)
 	mkdir -p graphs/
 	$(call RUN_TERRAFORM,graph -type=plan> graphs/$(STACK).dot)
-
-inframap: check state-pull
-	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
-	$(call RUN_TERRAFORM,init)
-	docker run --rm -i \
-		  --volume "$(shell pwd):/app" \
-		  --entrypoint "/bin/ash" \
-		  cycloid/inframap \
-		  -c "mkdir -p /app/graphs/; ./inframap generate /app/$(STACK).tfstate | dot -Tpng > /app/graphs/$(STACK)-inframap.png"
 
 destroy: check
 	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"

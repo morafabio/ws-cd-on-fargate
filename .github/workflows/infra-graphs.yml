@@ -34,10 +34,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Terraform run
+      - name: Terraform state-pull
         env:
           ENV: "dev"
-          ACTION: "inframap"
+          ACTION: "state-pull"
           STACKS: "${{ github.event.inputs.stacks }}"
         run: |
           echo "STACKS: ${STACKS}"
