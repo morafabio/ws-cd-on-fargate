@@ -15,7 +15,7 @@ output "aws_security_group_alb_sg_id" {
 }
 
 output "aws_lb_listener_lb_http_arn" {
-  value = aws_lb_listener.lb_http.arn
+  value = local.enable_alb && length(aws_lb.app_lb) > 0 ? aws_lb_listener.lb_http[0].arn : null
 }
 
 output "aws_vpc_main_id" {

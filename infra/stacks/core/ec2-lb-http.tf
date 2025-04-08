@@ -1,5 +1,6 @@
 resource "aws_lb_listener" "lb_http" {
   load_balancer_arn = aws_lb.app_lb[0].arn
+  count             = local.enable_alb ? 1 : 0
   port              = 80
   protocol          = "HTTP"
 
