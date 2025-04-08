@@ -55,7 +55,7 @@ jobs:
         env:
           ENV: "dev"
           ACTION: "${{ github.event.inputs.action || 'plan' }}"
-          STACKS: "${{ github.event.inputs.stacks || 'core,app' }}"
+          STACKS: "${{ github.event.inputs.stacks || 'core' }}"
         run: |
           echo "STACKS: ${STACKS}"
           IFS=',' read -r -a stack_array <<< "$STACKS"
@@ -63,5 +63,12 @@ jobs:
           for STACK in "${stack_array[@]}"; do
             echo "[${ACTION}] STACK="${STACK}" ENV="${ENV}""
             touch "stacks/$STACK/vars/${ENV}.tfvars"
-            make "${ACTION}" STACK="${STACK}" ENV="${ENV}"
+            OUT=$(make "${ACTION}" STACK="${STACK}" ENV="${ENV}")
+            echo "${OUT}"
+            cat <<EOF >> $GITHUB_STEP_SUMMARY
+            ## Terraform out for ${STACK}
+            \`\`\`
+            ${OUT}
+            \`\`\`
+            EOF
           done
