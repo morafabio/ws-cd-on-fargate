@@ -4,6 +4,7 @@ import time, socket, hashlib, base64, json
 
 start_time = time.time()
 hostname = socket.gethostname()
+api_version = "1.0"
 
 class PrettyJSONResponse(JSONResponse):
     def render(self, content: any) -> bytes:
@@ -14,7 +15,7 @@ app = FastAPI(default_response_class=PrettyJSONResponse)
 @app.middleware("http")
 async def add_version_header(request: Request, call_next):
     response: Response = await call_next(request)
-    response.headers["X-API-Version"] = "1.0"
+    response.headers["X-API-Version"] = api_version
     return response
 
 @app.get("/health")
@@ -23,7 +24,8 @@ def root():
     return {
         "status": "ok",
         "uptime_seconds": uptime,
-        "hostname": hostname
+        "hostname": hostname,
+        "API-Version": api_version
     }
 
 @app.post("/hash")
