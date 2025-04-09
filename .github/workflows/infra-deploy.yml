@@ -7,12 +7,13 @@ on:
         description: 'Terraform stacks (comma-separated, available: common, core, app)'
         required: false
         default: 'common,core,app'
-#  push:
-#    tags:
-#      - "[0-9]*"
-#    paths:
-#      build/task-definition.json
-#      infra/*
+  push:
+    tags:
+      - "[0-9]*"
+    paths:
+      .github/workflows/infra-*
+      build/task-definition.json
+      infra/*
 
 concurrency:
   group: infra-${{ github.ref }}

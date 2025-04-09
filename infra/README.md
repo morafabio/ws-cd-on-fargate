@@ -15,6 +15,11 @@ make plan STACK=common
 ```
 
 Core (Networking, ALB, ECS Cluster)
+
+```shell
+make show STACK=core
+```
+
 ```shell
 make plan STACK=core
 ```

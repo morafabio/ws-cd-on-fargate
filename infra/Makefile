@@ -49,7 +49,7 @@ graph-png: graph state-pull
 destroy: tf-init
 	$(call RUN_TERRAFORM,destroy -auto-approve -var-file="vars/$(ENV).tfvars")
 
-show: tf-init
+show:
 	$(call RUN_TERRAFORM,show)
 
 format: tf-init
