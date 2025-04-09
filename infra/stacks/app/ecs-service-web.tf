@@ -44,9 +44,22 @@ resource "aws_ecs_task_definition" "app_web" {
         retries     = 5
         startPeriod = 2
       }
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = "/ecs/${local.app.name}-web"
+          "awslogs-region"        = var.aws_region
+          "awslogs-stream-prefix" = "app"
+        }
+      }
       portMappings = [
         { containerPort = 8080, hostPort = 8080 }
       ]
     }
   ])
+}
+
+resource "aws_cloudwatch_log_group" "ecs" {
+  name              = "/ecs/${local.app.name}-web"
+  retention_in_days = 1
 }
