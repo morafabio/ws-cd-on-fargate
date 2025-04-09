@@ -4,7 +4,7 @@ import time, socket, hashlib, base64, json
 
 start_time = time.time()
 hostname = socket.gethostname()
-api_version = "1.0"
+api_version = "1.1"
 
 class PrettyJSONResponse(JSONResponse):
     def render(self, content: any) -> bytes:
@@ -46,6 +46,6 @@ async def generate_hash(req: Request):
         "sha512": hashlib.sha512(text_bytes).hexdigest(),
         "blake2b": hashlib.blake2b(text_bytes).hexdigest(),
         "blake2s": hashlib.blake2s(text_bytes).hexdigest(),
-        # "base64": base64.b64encode(text_bytes).decode('utf-8')
+        "base64": base64.b64encode(text_bytes).decode('utf-8')
     }
     return hashes

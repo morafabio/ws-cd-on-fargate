@@ -54,7 +54,7 @@ export default function () {
           "Contains md5 (32 hex chars)": (o) => o.hasOwnProperty("md5") && typeof o.md5 === "string" && o.md5.length === 32,
           "Contains sha1 (40 hex chars)": (o) => o.hasOwnProperty("sha1") && typeof o.sha1 === "string" && o.sha1.length === 40,
           "Contains sha256 (64 hex chars)": (o) => o.hasOwnProperty("sha256") && typeof o.sha256 === "string" && o.sha256.length === 64,
-          // "Contains base64": (o) => o.hasOwnProperty("base64") && typeof o.base64 === "string" && o.base64.length > 0,
+          "Contains base64": (o) => o.hasOwnProperty("base64") && typeof o.base64 === "string" && o.base64.length > 0,
         });
       }
     });
