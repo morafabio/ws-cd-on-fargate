@@ -15,6 +15,14 @@
       "environment": [],
       "mountPoints": [],
       "volumesFrom": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/app-cd-on-fargate-web",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "app"
+        }
+      },
       "healthCheck": {
         "command": [
           "CMD-SHELL",
