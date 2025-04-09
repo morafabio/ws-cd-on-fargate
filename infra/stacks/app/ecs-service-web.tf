@@ -6,6 +6,12 @@ resource "aws_ecs_service" "web" {
   desired_count   = local.app.desired_count
   launch_type     = "FARGATE"
 
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
+  deployment_maximum_percent         = 200
+
   lifecycle {
     ignore_changes = [task_definition]
   }
