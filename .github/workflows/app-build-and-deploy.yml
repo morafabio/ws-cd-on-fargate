@@ -2,6 +2,8 @@ name: app/build-and-deploy
 
 on:
   push:
+    tags:
+      - "[0-9]*"
     branches: [ master, dev-* ]
     paths:
       - .github/workflows/app-*
