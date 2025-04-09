@@ -2,7 +2,7 @@ name: infra/plan
 
 on:
   push:
-    branches: [ master, infra-* ]
+    branches: [ infra-* ]
     paths:
       - .github/workflows/infra-plan.yml
       - build/task-definition.json
