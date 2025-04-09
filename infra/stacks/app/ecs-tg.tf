@@ -8,9 +8,9 @@ resource "aws_lb_target_group" "ecs_tg" {
   health_check {
     path                = "/health"
     protocol            = "HTTP"
-    interval            = 30
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
+    interval            = 10
+    healthy_threshold   = 2
+    unhealthy_threshold = 5
   }
 }
 
