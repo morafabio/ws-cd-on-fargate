@@ -2,14 +2,12 @@ name: infra/plan
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, infra-* ]
     paths:
       - .github/workflows/infra-plan.yml
       - build/task-definition.json
       - infra/stacks/core/**
       - infra/stacks/app/**
-  pull_request:
-    branches: [ master ]
   workflow_dispatch:
     inputs:
       stacks:
