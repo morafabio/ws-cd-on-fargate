@@ -15,7 +15,7 @@ app = FastAPI(default_response_class=PrettyJSONResponse)
 @app.middleware("http")
 async def add_version_header(request: Request, call_next):
     response: Response = await call_next(request)
-    response.headers["X-API-Version"] = api_version
+    response.headers["X-API-Version"] = "1.1"
     return response
 
 @app.get("/health")
@@ -46,6 +46,6 @@ async def generate_hash(req: Request):
         "sha512": hashlib.sha512(text_bytes).hexdigest(),
         "blake2b": hashlib.blake2b(text_bytes).hexdigest(),
         "blake2s": hashlib.blake2s(text_bytes).hexdigest(),
-        # "base64": base64.b64encode(text_bytes).decode('utf-8')
+        "base64": base64.b64encode(text_bytes).decode('utf-8')
     }
     return hashes
