@@ -26,7 +26,7 @@ on:
         default: 'plan'
 
 concurrency:
-  group: infra-${{ github.ref }}
+  group: infra-plan-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:

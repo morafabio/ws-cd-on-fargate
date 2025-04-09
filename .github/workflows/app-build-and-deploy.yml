@@ -30,7 +30,7 @@ on:
         default: 'false'
 
 concurrency:
-  group: infra-${{ github.ref }}
+  group: app-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

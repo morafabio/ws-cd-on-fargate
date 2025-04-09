@@ -16,7 +16,7 @@ on:
       infra/*
 
 concurrency:
-  group: infra-${{ github.ref }}
+  group: infra-deploy-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
