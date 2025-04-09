@@ -1,4 +1,4 @@
-name: infra/build
+name: infra/plan
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       stacks:
-        description: 'Terraform stacks (comma-separated, available: app, common, core)'
+        description: 'Terraform stacks (comma-separated, available: common, core, app)'
         required: false
         default: 'core,app'
       action:
@@ -51,11 +51,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Terraform run
+      - name: Terraform / Plan
+        id: tf-plan
         env:
           ENV: "dev"
           ACTION: "${{ github.event.inputs.action || 'plan' }}"
-          STACKS: "${{ github.event.inputs.stacks || 'core' }}"
+          STACKS: "${{ github.event.inputs.stacks || 'core,app' }}"
         run: |
           echo "STACKS: ${STACKS}"
           IFS=',' read -r -a stack_array <<< "$STACKS"

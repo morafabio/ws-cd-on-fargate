@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       stacks:
-        description: 'Terraform stacks (comma-separated, available: app, common, core)'
+        description: 'Terraform stacks (comma-separated, available: common, core, app)'
         required: false
-        default: 'common,app,core'
+        default: 'common,core,app'
 
 concurrency:
   group: infra-${{ github.ref }}
