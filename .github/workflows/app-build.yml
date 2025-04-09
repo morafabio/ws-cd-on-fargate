@@ -119,7 +119,7 @@ jobs:
           $response
           \`\`\`
           EOF
-          response=$(curl -v -X POST -d '{"text": "I absolutely love this!"}' http://localhost:${BASE_PORT}/hash)
+          response=$(curl -i -d '{"text": "I absolutely love this!"}' http://localhost:${BASE_PORT}/hash)
           cat <<EOF >> $GITHUB_STEP_SUMMARY
           ## POST /hash 
           \`\`\`

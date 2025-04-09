@@ -22,28 +22,39 @@ check:
 	@echo "[$(WORKDIR)] ENV: $(ENV), STACK: $(STACK)"
 	@file "$(WORKDIR)/"
 	@file "$(WORKDIR)/vars/$(ENV).tfvars"
+
 tf-init: check
 	$(call RUN_TERRAFORM,init)
+
 plan: tf-init
 	$(call RUN_TERRAFORM,plan -var-file="vars/$(ENV).tfvars")
+
 apply: tf-init
 	$(call RUN_TERRAFORM,apply -auto-approve -var-file="vars/$(ENV).tfvars")
+
 import: tf-init
 	$(call RUN_TERRAFORM,import $(IMPORT_ARG))
+
 state-pull: tf-init
 	$(call RUN_TERRAFORM,state pull > $(STACK).tfstate)
+
 graph: tf-init
 	mkdir -p graphs/
 	$(call RUN_TERRAFORM,graph -type=plan> graphs/$(STACK).dot)
+
 graph-png: graph state-pull
 	docker run --rm -i -u $(id -u):$(id -g) --volume "$(shell pwd):/app" --entrypoint "/bin/ash" cycloid/inframap -c "cat /app/graphs/$(STACK).dot | dot -Tpng > /app/graphs/$(STACK).png"
 	docker run --rm -i -u $(id -u):$(id -g) --volume "$(shell pwd):/app" --entrypoint "/bin/ash" cycloid/inframap -c "mkdir -p /app/graphs/; ./inframap generate /app/$(STACK).tfstate | dot -Tpng > /app/graphs/$(STACK)-inframap.png"
+
 destroy: tf-init
 	$(call RUN_TERRAFORM,destroy -auto-approve -var-file="vars/$(ENV).tfvars")
+
 show: tf-init
 	$(call RUN_TERRAFORM,show)
+
 format: tf-init
 	$(call RUN_TERRAFORM,fmt -recursive)
+
 shell:
 	docker run --rm -ti --volume "$(shell pwd):/app" $(ENV_VARS) --entrypoint /bin/sh $(TERRAFORM_IMAGE)
 
