@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS builder
+FROM python:3.13-slim AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -7,7 +7,7 @@ COPY src/requirements.txt /opt/requirements.txt
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r /opt/requirements.txt
 
-FROM python:3.11-slim AS app
+FROM python:3.13-slim AS app
 
 COPY --from=builder /usr/local /usr/local
 COPY src/ /app
