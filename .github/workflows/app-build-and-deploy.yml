@@ -86,7 +86,7 @@ jobs:
 
       - name: Docker / build
         id: build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           tags: app-web:latest
           file: build/Dockerfile
